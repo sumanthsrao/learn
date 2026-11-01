@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Learnova — Reader</title>
+<style>
+:root{color-scheme:light;--ink:#1f211d;--bg:#fbf9f5;--muted:#62655d;--green:#1b4d3e;--border:#dadbd3}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,sans-serif}
+header{border-bottom:1px solid var(--border);padding:1rem max(1rem,calc((100vw - 1000px)/2));display:flex;flex-wrap:wrap;gap:1rem;align-items:center;justify-content:space-between}
+header strong{font-size:1.1rem}main{max-width:1000px;margin:auto;padding:1.6rem 1rem 5rem}
+input{width:100%;padding:.8rem;border:1px solid var(--border);border-radius:8px;font:inherit;background:#fff}
+button{cursor:pointer;border:1px solid var(--border);background:white;padding:.5rem .8rem;border-radius:8px;font:inherit}
+button.primary{background:var(--green);color:white;border-color:var(--green)}
+.row{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}.muted{color:var(--muted)}
+.card{background:white;border:1px solid var(--border);border-radius:10px;padding:1.1rem;margin:.8rem 0}
+.card h2{font-size:1.05rem;margin:0}.card p{margin:.4rem 0}
+#article{max-width:750px}.body{white-space:pre-wrap;overflow-wrap:anywhere}
+small{font-size:.85rem}#status{min-height:1.7rem}
+@media print{header,#search,#listing,.actions{display:none}#article{display:block!important}}
+</style>
+</head>
+<body>
+<header><strong>Learnova · Reader</strong><span class="muted">Private browser edition · No server account</span></header>
+<main>
+<section id="listing">
+<h1>Study topics</h1><p class="muted">Read approved Learnova topics. Private files stay in this browser; nothing is uploaded to a server.</p>
+<div class="card" id="import-box"><label for="import-file"><strong>Load your private topic export</strong></label><input id="import-file" type="file" multiple accept=".json,application/json" aria-label="Choose one or more Learnova topic JSON files"><p class="muted"><small>Stored only on this device. Import once, then read offline on this browser. Keep a separate backup of the export and your reading records.</small></p><button id="clear-data" type="button">Clear stored topics and progress</button></div>
+<label for="search">Find a topic</label><input id="search" type="search" autocomplete="off" placeholder="Search title, keywords, or category">
+<p id="status" role="status" class="muted"></p><div id="topic-list"></div>
+</section>
+<article id="article" hidden>
+<div class="row actions"><button id="back">← Topics</button><button id="mark" class="primary">Mark read</button><button id="bookmark">Save</button></div>
+<p class="muted" id="metadata"></p><h1 id="title"></h1><div id="text" class="body"></div>
+</article>
+</main>
+<script type="module" src="./reader.js"></script>
+</body></html>
