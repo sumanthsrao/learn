@@ -109,14 +109,20 @@ function render(){
 }
 byId('back').onclick=showList;byId('search').oninput=render;
 async function loadTopics(){
- let data=await cachedTopics();
- if(!data){
-  const r=await fetch('./topics.json',{cache:'no-store'});
-  if(r.ok)data=await r.json();
+ // No public topic endpoint exists. Contents can ONLY be imported privately in the browser.
+ try {
+  const data=await cachedTopics();
+  if(data)topics=parseTopics(data);
+ } catch(err) {
+  console.warn('Browser storage unavailable; manual file import remains possible',err);
  }
- if(data)topics=parseTopics(data);
- if(topics.length){render();const hash=decodeURIComponent(location.hash.slice(1));if(hash)showTopic(hash);}
- else status.textContent='Choose a Learnova topic export above to begin.';
+ if(topics.length){
+  render();
+  const hash=decodeURIComponent(location.hash.slice(1));
+  if(hash)showTopic(hash);
+ } else {
+  status.textContent='Reader is ready. To display GK topics, first choose your private topics.json file above.';
+ }
 }
 byId('import-file').addEventListener('change',async(e)=>{
  const files=Array.from(e.target.files||[]);if(!files.length)return;
@@ -129,13 +135,15 @@ byId('import-file').addEventListener('change',async(e)=>{
     if(merged.size>3000)throw Error('More than 3000 topics; split into smaller libraries');
   }
   const result={format:'learnova-static-reader-v1',topics:[...merged.values()]};
-  await cacheTopics(result);topics=result.topics;showList();
+  try { await cacheTopics(result); } catch(err) { console.warn('Browser could not persist topics',err); }
+  topics=result.topics;showList();
   status.textContent=topics.length+' topics imported privately into this browser.';
  }catch(err){status.textContent='Import failed: '+err.message;}
  finally{e.target.value='';}
 });
 byId('clear-data').addEventListener('click',async()=>{
  if(!confirm('Delete all saved topics, reading marks and bookmarks from this browser? Keep your original export backup.'))return;
- await clearStored();topics=[];showList();status.textContent='Browser data cleared. Original files were not changed.';
+ try { await clearStored(); } catch(err) { console.warn(err); }
+ topics=[];showList();status.textContent='Browser data cleared where available. Original files were not changed.';
 });
 loadTopics().catch(err=>{status.textContent='Reader storage unavailable: '+err.message;});
